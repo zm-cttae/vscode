@@ -52,8 +52,10 @@ export const findReplaceIcon = registerIcon('find-replace', Codicon.replace, nls
 export const findReplaceAllIcon = registerIcon('find-replace-all', Codicon.replaceAll, nls.localize('findReplaceAllIcon', 'Icon for \'Replace All\' in the editor find widget.'));
 export const findPreviousMatchIcon = registerIcon('find-previous-match', Codicon.arrowUp, nls.localize('findPreviousMatchIcon', 'Icon for \'Find Previous\' in the editor find widget.'));
 export const findNextMatchIcon = registerIcon('find-next-match', Codicon.arrowDown, nls.localize('findNextMatchIcon', 'Icon for \'Find Next\' in the editor find widget.'));
+export const selectAllMatchesIcon = registerIcon('select-all-matches', Codicon.expandAll, nls.localize('selectAllMatches', 'Icon for \'Select All Matches\' in the editor find widget.'));
 
 export interface IFindController {
+	selectAllMatches(): void;
 	replace(): void;
 	replaceAll(): void;
 	getGlobalBufferTerm(): Promise<string>;
@@ -63,6 +65,7 @@ const NLS_FIND_INPUT_LABEL = nls.localize('label.find', "Find");
 const NLS_FIND_INPUT_PLACEHOLDER = nls.localize('placeholder.find', "Find");
 const NLS_PREVIOUS_MATCH_BTN_LABEL = nls.localize('label.previousMatchButton', "Previous Match");
 const NLS_NEXT_MATCH_BTN_LABEL = nls.localize('label.nextMatchButton', "Next Match");
+const NLS_SELECT_ALL_MATCHES_BTN_LABEL = nls.localize('label.selectAllMatchesButton', "Select All Matches");
 const NLS_TOGGLE_SELECTION_FIND_TITLE = nls.localize('label.toggleSelectionFind', "Find in Selection");
 const NLS_CLOSE_BTN_LABEL = nls.localize('label.closeButton', "Close");
 const NLS_REPLACE_INPUT_LABEL = nls.localize('label.replace', "Replace");
@@ -141,6 +144,7 @@ export class FindWidget extends Widget implements IOverlayWidget, IVerticalSashL
 	private _closeBtn!: SimpleButton;
 	private _replaceBtn!: SimpleButton;
 	private _replaceAllBtn!: SimpleButton;
+	private _selectAllBtn!: SimpleButton;
 
 	private _isVisible: boolean;
 	private _isReplaceVisible: boolean;
@@ -1027,6 +1031,15 @@ export class FindWidget extends Widget implements IOverlayWidget, IVerticalSashL
 			}
 		}));
 
+		// Select all button
+		this._selectAllBtn = this._register(new SimpleButton({
+			label: NLS_SELECT_ALL_MATCHES_BTN_LABEL + this._keybindingLabelFor(FIND_IDS.SelectAllMatchesAction),
+			icon: selectAllMatchesIcon,
+			onTrigger: () => {
+				this._controller.selectAllMatches();
+			}
+		}));
+
 		const findPart = document.createElement('div');
 		findPart.className = 'find-part';
 		findPart.appendChild(this._findInput.domNode);
@@ -1036,6 +1049,7 @@ export class FindWidget extends Widget implements IOverlayWidget, IVerticalSashL
 		actionsContainer.appendChild(this._matchesCount);
 		actionsContainer.appendChild(this._prevBtn.domNode);
 		actionsContainer.appendChild(this._nextBtn.domNode);
+		actionsContainer.appendChild(this._selectAllBtn.domNode);
 
 		// Toggle selection button
 		this._toggleSelectionFind = this._register(new Toggle({
