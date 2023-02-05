@@ -1036,7 +1036,7 @@ export class FindWidget extends Widget implements IOverlayWidget, IVerticalSashL
 			label: NLS_SELECT_ALL_MATCHES_BTN_LABEL + this._keybindingLabelFor(FIND_IDS.SelectAllMatchesAction),
 			icon: selectAllMatchesIcon,
 			onTrigger: () => {
-				this._controller.selectAllMatches();
+				assertIsDefined(this._codeEditor.getAction(FIND_IDS.SelectAllMatchesAction)).run().then(undefined, onUnexpectedError);
 			}
 		}));
 
